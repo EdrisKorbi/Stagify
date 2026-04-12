@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stagify — Trouvez votre stage idéal</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- CURSOR -->
+    <div id="cursor"></div>
+    <div id="cursor-ring"></div>
+
+    <!-- ANIMATED BG -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- TOAST -->
+    <div id="toast"></div>
+
+    <!-- ═══════════════════════════ LOGIN PAGE ═══════════════════════════ -->
+    <div id="login-page" class="page active">
+        <div class="login-container">
+            <h1 class="login-logo">Stag<span>ify</span></h1>
+            <p class="login-tagline">La passerelle stage × entreprise</p>
+
+            <div class="role-tabs">
+                <button class="role-tab active" onclick="switchRole('etudiant')">Étudiant</button>
+                <button class="role-tab" onclick="switchRole('entreprise')">Entreprise</button>
+            </div>
+
+            <form onsubmit="doLogin(event)">
+                <div class="form-group">
+                    <label>Adresse e-mail</label>
+                    <input type="email" placeholder="vous@email.com" required />
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" placeholder="••••••••" required />
+                </div>
+                <button type="submit" class="btn-primary"><span>Se connecter</span></button>
+            </form>
+
+            <div class="login-divider">ou</div>
+            <p class="login-switch">Pas encore de compte ? <a href="#" onclick="doLogin(event)">Créer un compte</a></p>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════ MAIN APP ═══════════════════════════ -->
+    <div id="main-app" class="page">
+
+        <!-- NAVBAR -->
+        <nav id="navbar">
+            <div class="nav-logo">Stag<span>ify</span></div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="scrollToSection('home-page')">Accueil</a></li>
+                <li><a href="#" onclick="scrollToSection('about-section')">À propos</a></li>
+                <li><a href="#" onclick="scrollToSection('contact-section')">Contact</a></li>
+            </ul>
+            <button class="nav-logout" onclick="doLogout()">Déconnexion</button>
+        </nav>
+
+        <!-- HOME PAGE -->
+        <section id="home-page" class="section" style="padding-top: calc(80px + 4rem);">
+            <div class="hero">
+                <p class="hero-eyebrow">Plateforme de mise en relation</p>
+                <h1 class="hero-title">Trouve ton stage<br /><em>idéal</em></h1>
+                <p class="hero-sub">Stagify connecte les étudiants talentueux aux entreprises qui cherchent les
+                    meilleurs profils pour leurs stages.</p>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-num">240+</span>
+                    <span class="stat-label">Entreprises partenaires</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">1 800+</span>
+                    <span class="stat-label">Étudiants inscrits</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">92%</span>
+                    <span class="stat-label">Taux de placement</span>
+                </div>
+            </div>
+
+            <!-- FILIÈRE FILTER -->
+            <div style="margin-top:4rem;">
+                <p class="section-sub">Parcourir par filière</p>
+                <h2 class="section-title">Choisissez votre <em>domaine</em></h2>
+            </div>
+
+            <div class="filiere-bar" style="margin-top:2rem;">
+                <button class="filiere-chip active" onclick="filterFiliere(this,'all')">Tous</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'info')">Informatique</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'genie')">Génie Civil</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'finance')">Finance</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'marketing')">Marketing</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'rh')">Ressources Humaines</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'juridique')">Droit & Juridique</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'design')">Design</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'commerce')">Commerce</button>
+            </div>
+
+            <!-- COMPANY GRID -->
+            <div class="company-grid" id="company-grid"></div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section id="about-section" class="section">
+            <p class="section-sub">Qui sommes-nous</p>
+            <div class="about-grid">
+                <div class="about-img-wrapper">
+                    <div class="about-img-placeholder" id="about-img-container">
+                        <input type="file" accept="image/*" onchange="changeAboutImg(event)" title="Changer l'image" />
+                        <div class="placeholder-icon">📷</div>
+                        <p class="placeholder-text">Cliquez pour ajouter<br />votre photo d'équipe</p>
+                    </div>
+                </div>
+
+                <div class="about-text">
+                    <p class="about-eyebrow">Notre Équipe</p>
+                    <h2 class="about-title">Des étudiants <em>pour</em> les étudiants</h2>
+                    <p class="about-desc">
+                        Stagify est né d'une frustration commune : trouver un stage est souvent long, opaque et
+                        décourageant.
+                        Nous sommes une équipe d'étudiants passionnés qui ont décidé de changer cela. Réunis au sein de
+                        notre école d'ingénieurs,
+                        nous avons conçu cette plateforme de A à Z pour créer un pont direct et transparent entre les
+                        étudiants en quête d'expérience
+                        professionnelle et les entreprises à la recherche de talents frais et motivés.
+                        <br /><br />
+                        Notre mission est simple : rendre la recherche de stage accessible, rapide et humaine — parce
+                        que nous vivons la même réalité que vous.
+                    </p>
+                    <div class="about-members">
+                        <span class="member-chip"><strong>Yasmine B.</strong> · Chef de projet</span>
+                        <span class="member-chip"><strong>Karim D.</strong> · Dev Backend</span>
+                        <span class="member-chip"><strong>Lina M.</strong> · Design UI/UX</span>
+                        <span class="member-chip"><strong>Amine R.</strong> · Dev Frontend</span>
+                        <span class="member-chip"><strong>Sara T.</strong> · Marketing</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact-section" class="section">
+            <div class="contact-grid">
+                <div class="contact-left">
+                    <p class="about-eyebrow">Nous contacter</p>
+                    <h2 class="contact-title">Une <em>question</em> ?<br />Écrivez-nous.</h2>
+                    <p class="contact-desc" style="margin-top:1rem;">
+                        Notre équipe répond à toutes les demandes concernant la plateforme, les partenariats ou
+                        l'assistance aux étudiants.
+                    </p>
+                </div>
+
+                <form class="contact-form" onsubmit="submitContact(event)">
+                    <div class="form-row">
+                        <div class="form-group" style="margin:0">
+                            <label>Prénom</label>
+                            <input type="text" placeholder="Votre prénom" required />
+                        </div>
+                        <div class="form-group" style="margin:0">
+                            <label>Nom</label>
+                            <input type="text" placeholder="Votre nom" required />
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin:0">
+                        <label>E-mail</label>
+                        <input type="email" placeholder="vous@email.com" required />
+                    </div>
+                    <div class="form-group" style="margin:0">
+                        <label>Téléphone</label>
+                        <input type="tel" placeholder="+213 ··· ··· ···" />
+                    </div>
+                    <div class="form-group" style="margin:0">
+                        <label>Vous êtes</label>
+                        <select required>
+                            <option value="">Sélectionner…</option>
+                            <option>Étudiant</option>
+                            <option>Représentant d'entreprise</option>
+                            <option>Professeur / Encadreur</option>
+                            <option>Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0">
+                        <label>Message</label>
+                        <textarea placeholder="Votre message…" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary"><span>Envoyer le message</span></button>
+                </form>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-logo">Stag<span>ify</span></div>
+            <p class="footer-copy">© 2026 Stagify · Tous droits réservés</p>
+        </footer>
+    </div>
+
+    <!-- ═══════════════════════ INFO MODAL ═══════════════════════ -->
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('info-modal')">✕</button>
+            <p class="modal-eyebrow" id="info-eyebrow">Entreprise</p>
+            <h2 class="modal-title" id="info-title"></h2>
+            <div class="modal-meta" id="info-meta"></div>
+            <p class="modal-desc" id="info-desc"></p>
+            <div class="modal-actions">
+                <button class="btn-sm btn-filled" onclick="startApplyFlow()"><span>Postuler maintenant</span></button>
+                <button class="btn-sm btn-outline" onclick="closeModal('info-modal')">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════ QUIZ MODAL ════════════════════════ -->
+    <div class="modal-overlay" id="quiz-modal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('quiz-modal')">✕</button>
+
+            <!-- Quiz in progress -->
+            <div id="quiz-body">
+                <div class="quiz-header">
+                    <p class="modal-eyebrow" id="quiz-company-label">Quiz · </p>
+                    <h2 class="modal-title">Test de compatibilité</h2>
+                </div>
+                <div class="quiz-progress-bar">
+                    <div class="quiz-progress-fill" id="quiz-progress"></div>
+                </div>
+                <p style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gray-600);margin-bottom:1rem;"
+                    id="quiz-counter">Question 1 / 5</p>
+                <p class="quiz-question" id="quiz-q"></p>
+                <div class="quiz-options" id="quiz-opts"></div>
+                <div class="quiz-nav">
+                    <button class="btn-sm btn-filled" id="quiz-next-btn" onclick="nextQuestion()"
+                        style="display:none;"><span>Question suivante →</span></button>
+                </div>
+            </div>
+
+            <!-- Score screen -->
+            <div id="quiz-score" style="display:none;" class="quiz-score-screen">
+                <div class="score-circle">
+                    <span class="score-num" id="score-val">0</span>
+                    <span class="score-total" id="score-tot">/5</span>
+                </div>
+                <h3 class="score-label" id="score-lbl"></h3>
+                <p class="score-msg" id="score-msg"></p>
+                <button class="btn-primary" style="max-width:280px;margin:0 auto;"
+                    onclick="openApplyModal()"><span>Continuer la candidature →</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═════════════════════ APPLICATION MODAL ══════════════════ -->
+    <div class="modal-overlay" id="apply-modal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('apply-modal')">✕</button>
+            <p class="modal-eyebrow">Candidature</p>
+            <h2 class="modal-title">Dossier de candidature</h2>
+            <div class="apply-company-badge" id="apply-badge">🏢 Entreprise</div>
+
+            <form onsubmit="submitApplication(event)">
+                <div class="form-row" style="margin-bottom:1rem;">
+                    <div class="form-group" style="margin:0">
+                        <label>Prénom</label>
+                        <input type="text" placeholder="Votre prénom" required />
+                    </div>
+                    <div class="form-group" style="margin:0">
+                        <label>Nom</label>
+                        <input type="text" placeholder="Votre nom" required />
+                    </div>
+                </div>
+
+                <div class="form-row" style="margin-bottom:1rem;">
+                    <div class="form-group" style="margin:0">
+                        <label>E-mail</label>
+                        <input type="email" placeholder="vous@email.com" required />
+                    </div>
+                    <div class="form-group" style="margin:0">
+                        <label>Téléphone</label>
+                        <input type="tel" placeholder="+213 ··· ··· ···" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Filière / Spécialité</label>
+                    <input type="text" placeholder="Ex : Génie Informatique — M2" required />
+                </div>
+
+                <div class="form-group">
+                    <label>CV (PDF)</label>
+                    <div class="file-drop" id="cv-drop">
+                        <input type="file" accept=".pdf,.doc,.docx" onchange="handleCvDrop(event)" />
+                        <div class="file-drop-icon">📄</div>
+                        <p class="file-drop-text"><strong>Déposez votre CV ici</strong>ou cliquez pour sélectionner un
+                            fichier</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Lettre de motivation</label>
+                    <textarea placeholder="Présentez-vous et expliquez votre intérêt pour ce stage…" required
+                        style="min-height:130px;"></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary"><span>Envoyer ma candidature ✦</span></button>
+            </form>
+        </div>
+    </div>
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

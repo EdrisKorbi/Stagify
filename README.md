@@ -28,11 +28,11 @@ Ouvrir simplement `index.html` dans le navigateur.
 
 ## 👥 Équipe
 
-- Yasmine B. — Chef de projet  
-- Karim D. — Backend  
-- Lina M. — UI/UX  
-- Amine R. — Frontend  
-- Sara T. — Marketing  
+- Korbi Edris — Chef de projet  
+- Urun mohamed — Backend   
+- Ben fraj ons — Frontend  
+- Amri wala et Njeh fadia - conception
+- Abedlia raslen - rapport du projet 
 
 ## 📌 Objectif
 

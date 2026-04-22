@@ -6,22 +6,20 @@ class Student extends User {
     public $university;
     public $cin;
     public $field;
-    public $age;
     public $address;
 
     public function __construct($db) {
         parent::__construct($db);
     }
 
-    public function registerStudent($userId, $university, $cin, $field, $age, $address) {
-        $query = "INSERT INTO Student (userId, University, CIN, field, age, address) 
-                  VALUES (:userId, :univ, :cin, :field, :age, :address)";
+    public function registerStudent($userId, $university, $cin, $field, $address) {
+        $query = "INSERT INTO Student (userId, University, CIN, field, address) 
+                  VALUES (:userId, :univ, :cin, :field, :address)";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':userId', $userId);
         $stmt->bindParam(':univ', $university);
         $stmt->bindParam(':cin', $cin);
         $stmt->bindParam(':field', $field);
-        $stmt->bindParam(':age', $age);
         $stmt->bindParam(':address', $address);
         return $stmt->execute();
     }
@@ -38,7 +36,6 @@ class Student extends User {
             $this->university = $row['University'];
             $this->cin = $row['CIN'];
             $this->field = $row['field'];
-            $this->age = $row['age'];
             $this->address = $row['address'];
             return true;
         }

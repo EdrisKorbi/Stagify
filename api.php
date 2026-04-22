@@ -32,6 +32,14 @@ switch($action) {
         $data = json_decode(file_get_contents("php://input"));
         $user = new User($db);
         if($user->login($data->email, $data->password)) {
+            // Role mismatch check
+            $selectedRole = $data->selectedRole ?? null;
+            if($selectedRole && $user->type !== $selectedRole) {
+                ob_clean();
+                echo json_encode(["status" => "error", "message" => "Invalid credentials"]);
+                break;
+            }
+
             // Check if Enterprise is approved
             if($user->type === 'enterprise') {
                 $ent = new Enterprise($db);
@@ -73,9 +81,8 @@ switch($action) {
                 $cin = $data->cin ?? null;
                 $univ = $data->university ?? null;
                 $field = $data->field ?? null;
-                $age = $data->age ?? 20;
                 $addr = $data->address ?? '';
-                $student->registerStudent($user->userId, $univ, $cin, $field, $age, $addr);
+                $student->registerStudent($user->userId, $univ, $cin, $field, $addr);
             } else if($user->type === 'enterprise') {
                 $ent = new Enterprise($db);
                 $name = $data->name ?? null;

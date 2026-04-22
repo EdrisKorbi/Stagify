@@ -13,9 +13,12 @@ export async function doLogin(e){
   const email = e.target.querySelector('input[type="email"]').value;
   const password = e.target.querySelector('input[type="password"]').value;
 
+  const activeTab = document.querySelector('.role-tab.active');
+  const selectedRole = activeTab && activeTab.textContent.toLowerCase().includes('étudiant') ? 'student' : 'enterprise';
+
   const response = await fetch('api.php?action=login', {
     method: 'POST',
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ email, password, selectedRole })
   });
   
   const result = await response.json();
@@ -73,7 +76,6 @@ export async function doRegister(e){
   if(role === 'student'){
     data.university = document.getElementById('reg-univ').value;
     data.field = document.getElementById('reg-field').value;
-    data.age = 20; // Default or add input
     data.address = "";
   } else {
     data.name = document.getElementById('reg-ent-name').value;

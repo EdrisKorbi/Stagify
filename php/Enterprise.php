@@ -81,7 +81,7 @@ class Enterprise extends User {
 
 
     public function viewApplications($postId) {
-        $query = "SELECT p.*, s.field, s.age, s.address, u.email, u.username, q.content as quizContent
+        $query = "SELECT p.*, s.field, s.address, u.email, u.username, q.content as quizContent
                   FROM passedUsers p
                   JOIN Student s ON p.studentId = s.studentId
                   JOIN Users u ON s.userId = u.userId

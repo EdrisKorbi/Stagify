@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS Student (
     University VARCHAR(255),
     CIN VARCHAR(50),
     field VARCHAR(255),
-    age INT,
     address TEXT,
     FOREIGN KEY (userId) REFERENCES Users(userId) ON DELETE CASCADE
 );

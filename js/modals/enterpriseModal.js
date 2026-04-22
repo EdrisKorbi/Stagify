@@ -167,7 +167,7 @@ export async function viewApplicants(postId) {
                             <div style="font-weight:600;">${a.username || 'Candidat'}</div>
                             <div style="font-size:.7rem; color:var(--gray-600);">${a.email || 'Pas d\'email'}</div>
                             <div style="font-size:.7rem; color:var(--white);">${a.phone || 'Pas de téléphone'}</div>
-                            <div style="font-size:.7rem; color:var(--gray-500);">${a.field} · ${a.age} ans</div>
+                            <div style="font-size:.7rem; color:var(--gray-500);">${a.field}</div>
                         </td>
                         <td style="padding:1rem;">
                             <div style="max-width:200px; font-size:.75rem; color:var(--gray-400); margin-bottom:.5rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${a.motivation || ''}">

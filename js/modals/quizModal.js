@@ -1,19 +1,26 @@
-import { companies } from '../data/companies.js';
-import { quizData } from '../data/quizData.js';
 import { openModal, closeModal } from './modalHelpers.js';
 
 let quizIdx = 0, quizScore = 0, answeredCurrent = false;
-let currentCompany = null;
+let currentCompanyId = null;
+let currentQuiz = null;
+let userAnswers = [];
 
-export function openQuiz(id){
-  const c = companies.find(x=>x.id===id);
-  currentCompany = c;
+export async function openQuiz(id){
+  const response = await fetch(`api.php?action=getQuiz&postId=${id}`);
+  currentQuiz = await response.json();
+  
+  if(!currentQuiz || !currentQuiz.content || currentQuiz.content.length === 0) {
+    alert("Désolé, aucun quiz n'est disponible pour ce poste actuellement.");
+    return;
+  }
 
+  currentCompanyId = id;
   quizIdx = 0;
   quizScore = 0;
+  userAnswers = [];
   answeredCurrent = false;
 
-  document.getElementById('quiz-company-label').textContent = 'Quiz · ' + c.name;
+  document.getElementById('quiz-company-label').textContent = `Quiz · ${currentQuiz.postTitle || 'Entreprise'}`;
   document.getElementById('quiz-body').style.display = 'block';
   document.getElementById('quiz-score').style.display = 'none';
 
@@ -22,12 +29,13 @@ export function openQuiz(id){
 }
 
 function renderQuestion(){
-  const q = quizData[quizIdx];
-  const total = quizData.length;
+  const questions = currentQuiz.content;
+  const q = questions[quizIdx];
+  const total = questions.length;
 
   document.getElementById('quiz-counter').textContent = `Question ${quizIdx+1} / ${total}`;
   document.getElementById('quiz-progress').style.width = `${(quizIdx/total)*100}%`;
-  document.getElementById('quiz-q').textContent = q.q;
+  document.getElementById('quiz-q').textContent = q.question;
 
   const optsEl = document.getElementById('quiz-opts');
   optsEl.innerHTML = '';
@@ -35,7 +43,7 @@ function renderQuestion(){
 
   answeredCurrent = false;
 
-  q.opts.forEach((o,i)=>{
+  q.options.forEach((o,i)=>{
     const btn = document.createElement('button');
     btn.className = 'quiz-option';
     btn.textContent = o;
@@ -46,8 +54,8 @@ function renderQuestion(){
 
 function answerQuestion(chosen, correct, container){
   if(answeredCurrent) return;
-
   answeredCurrent = true;
+  userAnswers[quizIdx] = chosen;
 
   const btns = container.querySelectorAll('.quiz-option');
   btns.forEach((b,i)=>{
@@ -60,11 +68,24 @@ function answerQuestion(chosen, correct, container){
   document.getElementById('quiz-next-btn').style.display = 'inline-flex';
 }
 
-export function nextQuestion(){
+let pendingAnswers = [];
+
+export async function nextQuestion(){
   quizIdx++;
-  if(quizIdx < quizData.length) renderQuestion();
-  else showQuizScore();
+  if(quizIdx < currentQuiz.content.length) renderQuestion();
+  else {
+    pendingAnswers = [...userAnswers];
+    showQuizScore();
+  }
 }
+
+export function getQuizResults() {
+  return {
+    postId: currentCompanyId,
+    answers: pendingAnswers
+  };
+}
+
 
 function showQuizScore(){
   document.getElementById('quiz-body').style.display = 'none';
@@ -72,11 +93,12 @@ function showQuizScore(){
   const score = document.getElementById('quiz-score');
   score.style.display = 'block';
 
+  const total = currentQuiz.content.length;
   document.getElementById('quiz-progress').style.width = '100%';
   document.getElementById('score-val').textContent = quizScore;
-  document.getElementById('score-tot').textContent = `/${quizData.length}`;
+  document.getElementById('score-tot').textContent = `/${total}`;
 
-  const pct = quizScore / quizData.length;
+  const pct = quizScore / total;
   let lbl, msg;
 
   if(pct===1){
@@ -97,13 +119,14 @@ function showQuizScore(){
   document.getElementById('score-msg').textContent = msg;
 }
 
+
 export function openApplyModal(){
   closeModal('quiz-modal');
 
   setTimeout(()=>{
     document.getElementById('apply-badge').textContent =
-      '🏢 ' + (currentCompany ? currentCompany.name : 'Entreprise');
+      '🏢 ' + (currentQuiz ? currentQuiz.enterpriseName : 'Entreprise');
 
     openModal('apply-modal');
   }, 350);
-}
+}

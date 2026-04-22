@@ -47,9 +47,70 @@
             </form>
 
             <div class="login-divider">ou</div>
-            <p class="login-switch">Pas encore de compte ? <a href="#" onclick="doLogin(event)">Créer un compte</a></p>
+            <p class="login-switch">Pas encore de compte ? <a href="#" onclick="showSignup()">Créer un compte</a></p>
         </div>
     </div>
+
+    <div id="signup-page" class="page">
+        <div class="login-container">
+            <h1 class="login-logo">Stag<span>ify</span></h1>
+            <p class="login-tagline">Rejoignez la plateforme</p>
+
+            <form onsubmit="doRegister(event)">
+                <div class="form-group">
+                    <label>Vous êtes</label>
+                    <select id="signup-role" onchange="toggleSignupFields()" required>
+                        <option value="student">Étudiant</option>
+                        <option value="enterprise">Entreprise</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Nom d'utilisateur</label>
+                    <input type="text" id="reg-username" placeholder="Pseudo" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Adresse e-mail</label>
+                    <input type="email" id="reg-email" placeholder="vous@email.com" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="reg-password" placeholder="••••••••" required />
+                </div>
+
+                <!-- STUDENT FIELDS -->
+                <div id="student-fields">
+                    <div class="form-group">
+                        <label>Université</label>
+                        <input type="text" id="reg-univ" placeholder="Ex: USTHB" />
+                    </div>
+                    <div class="form-group">
+                        <label>Filière</label>
+                        <input type="text" id="reg-field" placeholder="Ex: Informatique" />
+                    </div>
+                </div>
+
+                <!-- ENTERPRISE FIELDS -->
+                <div id="enterprise-fields" style="display:none;">
+                    <div class="form-group">
+                        <label>Nom de l'entreprise</label>
+                        <input type="text" id="reg-ent-name" placeholder="Nom officiel" />
+                    </div>
+                    <div class="form-group">
+                        <label>Preuve d'existence (Lien Google Drive)</label>
+                        <input type="url" id="reg-proof" placeholder="https://drive.google.com/..." />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary"><span>Créer mon compte</span></button>
+            </form>
+
+            <p class="login-switch">Déjà un compte ? <a href="#" onclick="showLogin()">Se connecter</a></p>
+        </div>
+    </div>
+
 
     <!-- ═══════════════════════════ MAIN APP ═══════════════════════════ -->
     <div id="main-app" class="page">
@@ -59,9 +120,11 @@
             <div class="nav-logo">Stag<span>ify</span></div>
             <ul class="nav-links">
                 <li><a href="#" onclick="scrollToSection('home-page')">Accueil</a></li>
+                <li id="nav-history"><a href="#" onclick="scrollToSection('history-section')">Mes Candidatures</a></li>
                 <li><a href="#" onclick="scrollToSection('about-section')">À propos</a></li>
                 <li><a href="#" onclick="scrollToSection('contact-section')">Contact</a></li>
             </ul>
+
             <button class="nav-logout" onclick="doLogout()">Déconnexion</button>
         </nav>
 
@@ -97,19 +160,91 @@
 
             <div class="filiere-bar" style="margin-top:2rem;">
                 <button class="filiere-chip active" onclick="filterFiliere(this,'all')">Tous</button>
-                <button class="filiere-chip" onclick="filterFiliere(this,'info')">Informatique</button>
-                <button class="filiere-chip" onclick="filterFiliere(this,'genie')">Génie Civil</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'informatique')">Informatique</button>
                 <button class="filiere-chip" onclick="filterFiliere(this,'finance')">Finance</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'design')">Design & Arts</button>
                 <button class="filiere-chip" onclick="filterFiliere(this,'marketing')">Marketing</button>
-                <button class="filiere-chip" onclick="filterFiliere(this,'rh')">Ressources Humaines</button>
-                <button class="filiere-chip" onclick="filterFiliere(this,'juridique')">Droit & Juridique</button>
-                <button class="filiere-chip" onclick="filterFiliere(this,'design')">Design</button>
-                <button class="filiere-chip" onclick="filterFiliere(this,'commerce')">Commerce</button>
+                <button class="filiere-chip" onclick="filterFiliere(this,'autre')">Autre</button>
             </div>
 
             <!-- COMPANY GRID -->
             <div class="company-grid" id="company-grid"></div>
         </section>
+
+        <!-- ENTERPRISE DASHBOARD -->
+        <section id="enterprise-dashboard" class="section" style="display:none;">
+            <p class="section-sub">Espace Recruteur</p>
+            <h2 class="section-title">Tableau de <em>Bord</em></h2>
+
+            <div class="dashboard-actions" style="margin-top:2rem; display:flex; gap:1rem;">
+                <button class="btn-primary" style="max-width:250px;" onclick="openCreatePostModal()">
+                    <span>+ Nouveau Poste</span>
+                </button>
+            </div>
+
+            <!-- PROFILE SECTION -->
+            <div
+                style="margin-top: 3rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:2rem;">
+                <h3 style="margin-bottom:1.5rem; color:var(--primary-light);">Profil de l'entreprise</h3>
+                <form id="enterprise-profile-form" onsubmit="updateEnterpriseProfile(event)">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="form-group" style="margin:0">
+                            <label>Secteur d'activité</label>
+                            <select id="prof-sector">
+                                <option value="informatique">Informatique</option>
+                                <option value="finance">Finance</option>
+                                <option value="design">Design & Arts</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin:0">
+                            <label>Nombre d'employés</label>
+                            <select id="prof-employees">
+                                <option value="1-10">1-10</option>
+                                <option value="11-50">11-50</option>
+                                <option value="51-200">51-200</option>
+                                <option value="200+">200+</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top:1.5rem;">
+                        <label>Revenus Mensuels (Indication)</label>
+                        <input type="text" id="prof-revenue" placeholder="Ex: > 50 000 DA ou Non spécifié" />
+                    </div>
+                    <div class="form-group">
+                        <label>Localisation</label>
+                        <input type="text" id="prof-address" placeholder="Ex: Alger, Oran, Constantine..." />
+                    </div>
+                    <div class="form-group">
+                        <label>Description de l'entreprise</label>
+                        <textarea id="prof-desc" placeholder="Présentez votre entreprise..."
+                            style="min-height:80px;"></textarea>
+                    </div>
+                    <button type="submit" class="btn-sm btn-outline">Enregistrer les modifications</button>
+                </form>
+            </div>
+
+            <div class="company-grid" id="enterprise-posts" style="margin-top:3rem;">
+                <!-- Enterprise's own posts will appear here -->
+                <p style="padding:3rem;color:var(--gray-600);font-size:.85rem;grid-column:1/-1;text-align:center;">
+                    Chargement de vos postes...
+                </p>
+            </div>
+        </section>
+
+
+        <!-- HISTORY SECTION -->
+        <section id="history-section" class="section">
+
+            <p class="section-sub">Suivi de dossier</p>
+            <h2 class="section-title">Mes <em>Candidatures</em></h2>
+            <div class="company-grid" id="history-grid" style="margin-top:2rem;">
+                <p style="padding:3rem;color:var(--gray-600);font-size:.85rem;grid-column:1/-1;text-align:center;">Vous
+                    n'avez pas encore postulé à des stages.</p>
+            </div>
+        </section>
+
 
         <!-- ABOUT SECTION -->
         <section id="about-section" class="section">
@@ -270,43 +405,38 @@
                 <div class="form-row" style="margin-bottom:1rem;">
                     <div class="form-group" style="margin:0">
                         <label>Prénom</label>
-                        <input type="text" placeholder="Votre prénom" required />
+                        <input type="text" id="apply-firstname" placeholder="Votre prénom" required />
                     </div>
                     <div class="form-group" style="margin:0">
                         <label>Nom</label>
-                        <input type="text" placeholder="Votre nom" required />
+                        <input type="text" id="apply-lastname" placeholder="Votre nom" required />
                     </div>
                 </div>
 
                 <div class="form-row" style="margin-bottom:1rem;">
                     <div class="form-group" style="margin:0">
                         <label>E-mail</label>
-                        <input type="email" placeholder="vous@email.com" required />
+                        <input type="email" id="apply-email" placeholder="vous@email.com" required />
                     </div>
                     <div class="form-group" style="margin:0">
                         <label>Téléphone</label>
-                        <input type="tel" placeholder="+213 ··· ··· ···" />
+                        <input type="tel" id="apply-phone" placeholder="+213 ··· ··· ···" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Filière / Spécialité</label>
-                    <input type="text" placeholder="Ex : Génie Informatique — M2" required />
+                    <input type="text" id="apply-field" placeholder="Ex : Génie Informatique — M2" required />
                 </div>
 
                 <div class="form-group">
-                    <label>CV (PDF)</label>
-                    <div class="file-drop" id="cv-drop">
-                        <input type="file" accept=".pdf,.doc,.docx" onchange="handleCvDrop(event)" />
-                        <div class="file-drop-icon">📄</div>
-                        <p class="file-drop-text"><strong>Déposez votre CV ici</strong>ou cliquez pour sélectionner un
-                            fichier</p>
-                    </div>
+                    <label>Lien vers votre CV (Drive, Dropbox...)</label>
+                    <input type="url" id="apply-cv-link" placeholder="https://drive.google.com/..." required />
                 </div>
 
                 <div class="form-group">
                     <label>Lettre de motivation</label>
-                    <textarea placeholder="Présentez-vous et expliquez votre intérêt pour ce stage…" required
+                    <textarea id="apply-motivation" placeholder="Présentez-vous et expliquez votre intérêt pour ce stage…" required
                         style="min-height:130px;"></textarea>
                 </div>
 
@@ -314,7 +444,79 @@
             </form>
         </div>
     </div>
+    <!-- ═════════════════════ COMPANY POSTS MODAL ══════════════════ -->
+    <div class="modal-overlay" id="company-posts-modal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('company-posts-modal')">✕</button>
+            <p class="modal-eyebrow">Offres disponibles</p>
+            <h2 class="modal-title" id="company-posts-title">Entreprise</h2>
+            
+            <div id="company-posts-list" style="margin-top:2rem; display:flex; flex-direction:column; gap:1rem;">
+                <!-- Posts will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ═════════════════════ CANDIDATES MODAL ══════════════════ -->
+    <div class="modal-overlay" id="candidates-modal">
+        <div class="modal-box" style="max-width: 800px;">
+            <button class="modal-close" onclick="closeModal('candidates-modal')">✕</button>
+            <p class="modal-eyebrow">Recrutement</p>
+            <h2 class="modal-title">Candidatures reçues</h2>
+
+            <div id="candidates-list" style="margin-top:2rem;">
+                <!-- Candidates will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ═════════════════════ CREATE POST MODAL ══════════════════ -->
+
+    <div class="modal-overlay" id="create-post-modal">
+        <div class="modal-box" style="max-width: 650px;">
+            <button class="modal-close" onclick="closeModal('create-post-modal')">✕</button>
+            <p class="modal-eyebrow">Recrutement</p>
+            <h2 class="modal-title">Nouveau Poste de Stage</h2>
+
+            <form onsubmit="submitNewPost(event)">
+                <div class="form-group">
+                    <label>Titre du stage</label>
+                    <input type="text" id="post-title" placeholder="Ex: Développeur Web Fullstack" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Description du poste</label>
+                    <textarea id="post-content" placeholder="Détails de la mission..." required
+                        style="min-height:80px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Pré-requis (Séparez par des virgules)</label>
+                    <input type="text" id="post-requirements" placeholder="PHP, JS, React, MySQL..." required />
+                </div>
+
+                <div style="margin: 2rem 0 1rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                        <div>
+                            <p class="modal-eyebrow">Quiz d'évaluation (MCQ)</p>
+                            <p style="font-size: .75rem; color: var(--gray-600);">Ajoutez jusqu'à 10 questions avec
+                                leurs réponses.</p>
+                        </div>
+                        <button type="button" class="btn-sm btn-outline" onclick="addQuizQuestion()">+ Ajouter</button>
+                    </div>
+
+                    <div id="quiz-questions-container">
+                        <!-- Questions will be added here -->
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary"><span>Publier l'offre ✦</span></button>
+            </form>
+        </div>
+    </div>
+
     <script type="module" src="js/main.js"></script>
 </body>
+
 
 </html>

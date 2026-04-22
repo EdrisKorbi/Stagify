@@ -33,6 +33,10 @@ CREATE TABLE IF NOT EXISTS Enterprise (
     validity ENUM('pending', 'accepted', 'refused') DEFAULT 'pending',
     address TEXT,
     proof_link TEXT, -- Google Drive link for verification
+    sector VARCHAR(255),
+    description TEXT,
+    revenue VARCHAR(100),
+    employees VARCHAR(50),
     FOREIGN KEY (userId) REFERENCES Users(userId) ON DELETE CASCADE
 );
 
@@ -44,6 +48,7 @@ CREATE TABLE IF NOT EXISTS posts (
     title VARCHAR(255) NOT NULL,
     content TEXT,
     requirements JSON, -- Array of strings
+    filiere VARCHAR(255),
     FOREIGN KEY (enterpriseId) REFERENCES Enterprise(enterpriseId) ON DELETE CASCADE
 );
 

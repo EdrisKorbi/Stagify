@@ -5,8 +5,8 @@ header("Access-Control-Allow-Methods: POST, GET");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-error_reporting(0);
-ini_set('display_errors', 0);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 ob_start();
 
 require_once 'php/Database.php';
@@ -18,6 +18,12 @@ require_once 'php/Quiz.php';
 
 $database = new Database();
 $db = $database->getConnection();
+
+if (!$db) {
+    ob_clean();
+    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
+    exit;
+}
 
 $action = $_GET['action'] ?? '';
 
@@ -267,8 +273,7 @@ switch($action) {
         break;
 
     default:
-
-
+        ob_clean();
         echo json_encode(["status" => "error", "message" => "Invalid action"]);
         break;
 }
